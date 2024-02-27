@@ -173,19 +173,7 @@
         </div>
     </main> <!-- .main-content -->
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <form action="#" class="subscribe-form">
-                        <p class="colophon">Copyright 2024. All rights reserved</p>
-                    </form>
-                </div>
 
-            </div>
-
-        </div>
-    </footer> <!-- .site-footer -->
     </div>
 
     <script src="{{ asset('designs/js/jquery-1.11.1.min.js') }}"></script>
