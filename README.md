@@ -49,6 +49,15 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[byte5](https://byte5.de)**
 - **[OP.GG](https://op.gg)**
 
+
+## Country Available
+
+For this Test Project the only available country to get the weather forecast.
+
+- Philippines
+- America
+- United Kingdom
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
