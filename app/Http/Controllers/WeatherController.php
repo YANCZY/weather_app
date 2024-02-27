@@ -137,11 +137,7 @@ class WeatherController extends Controller
         }
         else
         {
-            // return $notification = array(
-            // 'message'    => 'City has not been added yet!',
-            // 'alert-type' => 'info'
-            // );
-            // return redirect()->route('home')->with('notificaiton', $notification);
+           
             
             return redirect()->route('home');
         }

@@ -36,8 +36,6 @@
                 <div class="main-navigation">
                     <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
                     <ul class="menu">
-                        <!-- <li class="menu-item current-menu-item"><a href="index.html">Home</a></li> -->
-                        <!--<li class="menu-item"><a href="">Contact</a></li>-->
                         <li class="menu-item"><a href="{{ route('logout') }}">Logout</a></li>
 
                     </ul> <!-- .menu -->
@@ -129,30 +127,6 @@
 
                         </div>
                     </div>
-                    <!--  <div class="forecast">
-                        <div class="forecast-header">
-                            <div class="day">Saturday</div>
-                        </div>
-                        <div class="forecast-content">
-                            <div class="forecast-icon">
-                                <img src="images/icons/icon-13.svg" alt="" width=48>
-                            </div>
-                            <div class="degree">23<sup>o</sup>C</div>
-                            <small>18<sup>o</sup></small>
-                        </div>
-                    </div>
-                    <div class="forecast">
-                        <div class="forecast-header">
-                            <div class="day">Sunday</div>
-                        </div>
-                        <div class="forecast-content">
-                            <div class="forecast-icon">
-                                <img src="images/icons/icon-14.svg" alt="" width=48>
-                            </div>
-                            <div class="degree">23<sup>o</sup>C</div>
-                            <small>18<sup>o</sup></small>
-                        </div>
-                    </div>-->
                 </div>
             </div>
         </div>
