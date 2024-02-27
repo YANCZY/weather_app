@@ -21,6 +21,11 @@ class Controller extends BaseController
     {
         return view('auth.register');
     }
+
+    public function logout()
+    {
+        
+    }
     
     
 }

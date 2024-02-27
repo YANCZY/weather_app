@@ -38,8 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/weather', [WeatherController::class,'index'])->name('home'); 
-    Route::post('/weather', [WeatherController::class, 'showResults'])->name('search');
+    Route::get('/dashboard', [WeatherController::class,'index'])->name('home'); 
+    Route::post('/dashboard', [WeatherController::class, 'showResults'])->name('search');
+    Route::get('/logout',[WeatherController::class, 'destroy'])->name('logout');
 
 });
 
