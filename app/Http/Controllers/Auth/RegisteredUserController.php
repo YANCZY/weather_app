@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Exceptions\Handler;
+use App\Exceptions;
+use Exception;
 
 class RegisteredUserController extends Controller
 {
@@ -30,30 +33,42 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name'=>['required','string','max:255'],
-            'sex'=>['required','string','max:10'],
-            'birthdate'=>['required','date'],
-            'address'=>['required','string','max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'sex'=>$request->sex,
-            'birthdate'=>$request->birthdate,
-            'address'=>$request->address,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try{
+            //, Rules\Password::defaults()
+            $request->validate([
+                'first_name' => ['required', 'string', 'max:255'],
+                'last_name'=>['required','string','max:255'],
+                'sex'=>['required','string','max:10'],
+                'birthdate'=>['required','date'],
+                'address'=>['required','string','max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'confirmed'],
+            ]);
 
-        event(new Registered($user));
 
-        Auth::login($user);
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'sex'=>$request->sex,
+                'birthdate'=>$request->birthdate,
+                'address'=>$request->address,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return redirect(RouteServiceProvider::HOME);
+            event(new Registered($user));
+
+            Auth::login($user);
+            return redirect(RouteServiceProvider::HOME);
+        }catch(Exception $e){
+            $notification = array(
+                'message'    => 'Registration Failed!',
+                'alert-type' => 'error'
+            );
+            return redirect('/register')->with($notification);
+        }
+       
+       
     }
 }

@@ -16,9 +16,9 @@ use App\Http\Controllers\WeatherController;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+// Route::get('/', function () {
+//     return view('auth.login');
+// });
 
 
 Route::controller(Controller::class)->group(function(){
@@ -35,6 +35,7 @@ Route::get('/dashboard', function () {
 // Route::post('/test', [WeatherController::class, 'showResults'])->name('search');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/',[WeatherController::class, 'dashboard']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

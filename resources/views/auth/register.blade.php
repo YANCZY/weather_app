@@ -21,6 +21,7 @@
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('design/css/app.css') }}" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 
 </head>
 
@@ -57,7 +58,8 @@
                                 </a>
                             </div>
                             <div class="p-2">
-                                <form method="POST" action="{{ route('register') }}">
+                                <form method="POST" class="from-prevent-multiple-submits" id="registrationForm"
+                                    action="{{ route('register') }}">
                                     @csrf
                                     <div class="mb-3">
                                         <label for="firstname" class="form-label">First Name</label>
@@ -91,10 +93,10 @@
 
                                     <div class="mb-3">
                                         <label for="birthdate" class="form-label">Birthdate</label>
-                                        <input type="date" class="form-control" name="birthdate" id="birthdate"
-                                            placeholder="Enter Birthdate" required>
+                                        <input type="date" class="form-control birthdate" name="birthdate"
+                                            id="birthdate" value="09-01-2013" placeholder="Enter Birthdate" required>
                                         <div class="invalid-feedback">
-                                            Please Enter Last Name
+                                            Please Enter Birthdate
                                         </div>
                                     </div>
 
@@ -157,8 +159,9 @@
 
                                     <div class="mt-4 d-grid">
                                         <button
-                                            class="btn w-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
-                                            type="submit">{{ __('Register') }}</button>
+                                            class="from-prevent-multiple-submits btn w-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90"
+                                            type="submit" id="submitButton"
+                                            onclick="disable(this)">{{ __('Register') }}</button>
                                     </div>
 
 
@@ -194,12 +197,60 @@
     <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
     <!-- validation init -->
     <script src="{{ asset('assets/js/pages/validation.init.js') }}"></script>
 
     <!-- App js -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script>
+        var today = new Date();
+        var dd = 30;
+        var mm = 12; //January is 0!
+        var yyyy = today.getFullYear() - 15;
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("birthdate").setAttribute("max", today);
+    </script>
+
+    <script type="text/javascript">
+        (function() {
+            $('.from-prevent-multiple-submits').on('submit', function() {
+                $('.from-prevent-multiple-submits').attr('disabled', 'true');
+            })
+        })();
+    </script>
+
+    <script>
+        @if (Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+                    toastr.info(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'success':
+                    toastr.success(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'warning':
+                    toastr.warning(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'error':
+                    toastr.error(" {{ Session::get('message') }} ");
+                    break;
+            }
+        @endif
+    </script>
+
 
 </body>
 

@@ -20,6 +20,8 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
+
 
 </head>
 
@@ -64,7 +66,8 @@
                                 </a>
                             </div>
                             <div class="p-2">
-                                <form method="POST" action="{{ route('login') }}">
+                                <form method="POST" class="from-prevent-multiple-submits"
+                                    action="{{ route('login') }}">
                                     @csrf
 
                                     <div class="mb-3">
@@ -92,7 +95,9 @@
                                     </div>
 
                                     <div class="mt-3 d-grid">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit">Log
+                                        <button
+                                            class="from-prevent-multiple-submits btn btn-primary waves-effect waves-light"
+                                            type="submit">Log
                                             In</button>
                                     </div>
 
@@ -133,9 +138,41 @@
     <script src="{{ asset('assets/libs/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 
     <!-- App js -->
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
+    <script type="text/javascript">
+        (function() {
+            $('.from-prevent-multiple-submits').on('submit', function() {
+                $('.from-prevent-multiple-submits').attr('disabled', 'true');
+            })
+        })();
+    </script>
+    <script>
+        @if (Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+                    toastr.info(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'success':
+                    toastr.success(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'warning':
+                    toastr.warning(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'error':
+                    toastr.error(" {{ Session::get('message') }} ");
+                    break;
+            }
+        @endif
+    </script>
 </body>
 
 <!-- Mirrored from themesbrand.com/skote/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 31 Oct 2022 10:49:38 GMT -->

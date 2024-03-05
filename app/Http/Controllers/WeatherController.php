@@ -137,9 +137,12 @@ class WeatherController extends Controller
         }
         else
         {
-           
+            $notification = array(
+                'message'    => 'Country has not been added yet.',
+                'alert-type' => 'info'
+            );
             
-            return redirect()->route('home');
+            return redirect()->route('home')->with($notification);
         }
         
        
@@ -147,6 +150,31 @@ class WeatherController extends Controller
        
        
 
+    }
+
+    public function dashboard()
+    {
+        //
+        $country = "";
+        $temp = '-';
+        $humidity = "";
+        $wind = '-';
+        $weatherDescription = '-';
+        $iconUrl = "";
+        $day0Temp = '-';
+        $day1Temp = '-';
+        $day2Temp = '-';
+        $day3Temp = '-';
+        $icon0Url = "";
+        $icon1Url = "";
+        $icon2Url = "";
+        $icon3Url = "";
+        $weather0Description = '-';
+        $weather1Description = '-';
+        $weather2Description = '-';
+        $weather3Description = '-';
+        
+        return view('dashboard', compact('country','temp','humidity','wind','weatherDescription','iconUrl', 'day0Temp', 'day1Temp', 'day2Temp', 'day3Temp', 'icon0Url', 'icon1Url', 'icon2Url', 'icon3Url','weather0Description','weather1Description','weather2Description','weather3Description'));
     }
 
     public function __invoke($city)

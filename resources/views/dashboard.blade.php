@@ -11,6 +11,7 @@
     <!-- Loading third party fonts -->
     <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css">
     <link href="{{ asset('designs/fonts/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 
     <!-- Loading main css file -->
     <link rel="stylesheet" href="{{ asset('designs/style.css') }}">
@@ -153,6 +154,31 @@
     <script src="{{ asset('designs/js/jquery-1.11.1.min.js') }}"></script>
     <script src="{{ asset('designs/js/plugins.js') }}"></script>
     <script src="{{ asset('designs/js/app.js') }}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+    <script>
+        @if (Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}"
+            switch (type) {
+                case 'info':
+                    toastr.info(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'success':
+                    toastr.success(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'warning':
+                    toastr.warning(" {{ Session::get('message') }} ");
+                    break;
+
+                case 'error':
+                    toastr.error(" {{ Session::get('message') }} ");
+                    break;
+            }
+        @endif
+    </script>
 
 </body>
 
