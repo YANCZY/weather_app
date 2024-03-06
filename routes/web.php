@@ -35,13 +35,15 @@ Route::get('/dashboard', function () {
 // Route::post('/test', [WeatherController::class, 'showResults'])->name('search');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/',[WeatherController::class, 'dashboard']);
+
+    Route::get('/',[WeatherController::class, 'index']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/dashboard', [WeatherController::class,'index'])->name('home'); 
     Route::post('/dashboard', [WeatherController::class, 'showResults'])->name('search');
     Route::get('/logout',[WeatherController::class, 'destroy'])->name('logout');
+    
 
 });
 

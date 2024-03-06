@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use function PHPUnit\Framework\isNull;
+
 class WeatherController extends Controller
 {
 
@@ -21,26 +23,31 @@ class WeatherController extends Controller
     public function index()
     {
         //
-        $country = "";
+        $country = '';
         $temp = '-';
-        $humidity = "";
+        $humidity = '';
         $wind = '-';
         $weatherDescription = '-';
-        $iconUrl = "";
+        $iconUrl = '';
         $day0Temp = '-';
         $day1Temp = '-';
         $day2Temp = '-';
         $day3Temp = '-';
-        $icon0Url = "";
-        $icon1Url = "";
-        $icon2Url = "";
-        $icon3Url = "";
+        $icon0Url = '';
+        $icon1Url = '';
+        $icon2Url = '';
+        $icon3Url = '';
         $weather0Description = '-';
         $weather1Description = '-';
         $weather2Description = '-';
         $weather3Description = '-';
-        
-        return view('dashboard', compact('country','temp','humidity','wind','weatherDescription','iconUrl', 'day0Temp', 'day1Temp', 'day2Temp', 'day3Temp', 'icon0Url', 'icon1Url', 'icon2Url', 'icon3Url','weather0Description','weather1Description','weather2Description','weather3Description'));
+
+        return view('dashboard', compact(
+            'country', 'temp', 'humidity', 'wind', 'weatherDescription', 'iconUrl', 
+            'day0Temp', 'day1Temp', 'day2Temp', 'day3Temp', 'icon0Url', 'icon1Url', 
+            'icon2Url', 'icon3Url', 'weather0Description', 'weather1Description', 
+            'weather2Description', 'weather3Description'
+        ));
     }
 
     /**
@@ -81,101 +88,71 @@ class WeatherController extends Controller
 
     public function showResults(Request $request)
     {
-        $apiKey = env('OPENWEATHERMAP_API_KEY');
-
+        
+        $openWeatherApiKey = env('OPENWEATHER_API_KEY');
+        $googleMapsApiKey = env('GOOGLE_MAP_LOCATION_KEY');
         $countryName = $request->country;
-        $lat = "";
-        $lon = "";
-
-        if(strcasecmp($countryName, "Philippines") == 0)
-        {
-            $country = $request->country;
-            $lat = "12.879721";
-            $lon = "121.774017";
-        }
-        elseif(strcasecmp($countryName, "Us") == 0 || strcasecmp($countryName, "America") == 0)
-        {
-            $country = $request->country;
-            $lat = "37.090240";
-            $lon = "-95.712891";
-        }
-        elseif(strcasecmp($countryName, "UK") == 0 || strcasecmp($countryName, "United Kingdom") == 0)
-        {
-            $country = $request->country;
-            $lat = "55.378052";
-            $lon = "-3.435973";
-        }
-       
-
-
-        $url = 'api.openweathermap.org/data/2.5/forecast?lat=' . $lat . '&lon=' . $lon .  '&appid=244e295b6af97c1d9b0d33d0db57e5e4';
-        $response = Http::get($url);
-
-        if($response->successful())
-        {
-            $data = $response->json();
-
-            $country = ucfirst($country);
-            $temp = $this->convertTemperature($data['list'][0]['main']['temp']);
-            $humidity = $data['list'][0]['main']['humidity'];
-            $wind = round($data['list'][0]['wind']['speed'], 2);
-            $weatherDescription = $data['list'][0]['weather'][0]['description'];
-            $icon = $data['list'][0]['weather'][0]['icon'];
-            $iconUrl = 'http://openweathermap.org/img/w/' . $icon . '.png';
-            
-
-            $days = [6, 13, 21, 29]; // Indices for the next 4 days
-            for($i = 0; $i < 4; $i++)
-            {
-                ${"day{$i}Temp"} = $this->convertTemperature($data['list'][$days[$i]]['main']['temp']);
-                ${"icon{$i}"} = $data['list'][$days[$i]]['weather'][0]['icon'];
-                ${"icon{$i}Url"} = 'http://openweathermap.org/img/w/' . ${"icon{$i}"} . '.png';
-                ${"weather{$i}Description"} = $data['list'][$i]['weather'][0]['main'];
+        $lat = $request->filled('cityLat') ? $request->cityLat : null;
+        $lon = $request->filled('cityLng') ? $request->cityLng : null;
+        
+        if (is_null($lat) || is_null($lon)) {
+            $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($countryName) . '&key=' . $googleMapsApiKey;
+            $response = file_get_contents($url);
+            $data = json_decode($response, true);
+        
+            if ($data['status'] != 'OK' || !isset($data['results'][0]['geometry']['location']['lat']) || !isset($data['results'][0]['geometry']['location']['lng'])) {
+                $notification = [
+                    'message'    => 'Country has not been added yet.',
+                    'alert-type' => 'info'
+                ];
+                return redirect()->route('home')->with($notification);
             }
-            
-            return view('dashboard',compact('country','temp','humidity','wind','weatherDescription','iconUrl', 'day0Temp', 'day1Temp', 'day2Temp', 'day3Temp', 'icon0Url', 'icon1Url', 'icon2Url', 'icon3Url','weather0Description','weather1Description','weather2Description','weather3Description'));
+        
+            $lat = $data['results'][0]['geometry']['location']['lat'];
+            $lon = $data['results'][0]['geometry']['location']['lng'];
         }
-        else
-        {
-            $notification = array(
+        
+        $url = 'http://api.openweathermap.org/data/2.5/forecast?lat=' . $lat . '&lon=' . $lon . '&appid=' . $openWeatherApiKey;
+        $response = Http::get($url);
+        
+        if ($response->successful()) {
+            $data = $response->json();
+        
+            // Extracting weather information
+        
+            // Constructing view data
+            $viewData = [
+                'country' => ucfirst($countryName),
+                'temp' => $this->convertTemperature($data['list'][0]['main']['temp']),
+                'humidity' => $data['list'][0]['main']['humidity'],
+                'wind' => round($data['list'][0]['wind']['speed'], 2),
+                'weatherDescription' => $data['list'][0]['weather'][0]['description'],
+                'iconUrl' => 'http://openweathermap.org/img/w/' . $data['list'][0]['weather'][0]['icon'] . '.png',
+                'day0Temp' => $this->convertTemperature($data['list'][6]['main']['temp']),
+                'icon0Url' => 'http://openweathermap.org/img/w/' . $data['list'][6]['weather'][0]['icon'] . '.png',
+                'day1Temp' => $this->convertTemperature($data['list'][13]['main']['temp']),
+                'icon1Url' => 'http://openweathermap.org/img/w/' . $data['list'][13]['weather'][0]['icon'] . '.png',
+                'day2Temp' => $this->convertTemperature($data['list'][21]['main']['temp']),
+                'icon2Url' => 'http://openweathermap.org/img/w/' . $data['list'][21]['weather'][0]['icon'] . '.png',
+                'day3Temp' => $this->convertTemperature($data['list'][29]['main']['temp']),
+                'icon3Url' => 'http://openweathermap.org/img/w/' . $data['list'][29]['weather'][0]['icon'] . '.png',
+                'weather0Description' => $data['list'][6]['weather'][0]['main'],
+                'weather1Description' => $data['list'][13]['weather'][0]['main'],
+                'weather2Description' => $data['list'][21]['weather'][0]['main'],
+                'weather3Description' => $data['list'][29]['weather'][0]['main'],
+            ];
+        
+            return view('dashboard', $viewData);
+        } else {
+            $notification = [
                 'message'    => 'Country has not been added yet.',
                 'alert-type' => 'info'
-            );
-            
+            ];
             return redirect()->route('home')->with($notification);
         }
-        
-       
-        
-       
-       
 
     }
 
-    public function dashboard()
-    {
-        //
-        $country = "";
-        $temp = '-';
-        $humidity = "";
-        $wind = '-';
-        $weatherDescription = '-';
-        $iconUrl = "";
-        $day0Temp = '-';
-        $day1Temp = '-';
-        $day2Temp = '-';
-        $day3Temp = '-';
-        $icon0Url = "";
-        $icon1Url = "";
-        $icon2Url = "";
-        $icon3Url = "";
-        $weather0Description = '-';
-        $weather1Description = '-';
-        $weather2Description = '-';
-        $weather3Description = '-';
-        
-        return view('dashboard', compact('country','temp','humidity','wind','weatherDescription','iconUrl', 'day0Temp', 'day1Temp', 'day2Temp', 'day3Temp', 'icon0Url', 'icon1Url', 'icon2Url', 'icon3Url','weather0Description','weather1Description','weather2Description','weather3Description'));
-    }
 
     public function __invoke($city)
     {

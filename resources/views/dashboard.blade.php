@@ -12,7 +12,9 @@
     <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css">
     <link href="{{ asset('designs/fonts/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
-
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMg4EDnLZSiLqA0W6YuQ8jRyV-IA9zWA8&libraries=places&callback=initMap">
+    </script>
     <!-- Loading main css file -->
     <link rel="stylesheet" href="{{ asset('designs/style.css') }}">
 
@@ -52,7 +54,9 @@
                 <form action="{{ route('search') }}" method="post" class="find-location">
                     @csrf
                     <!--  <input type="text" placeholder="Find your location...">-->
-                    <input type="text" placeholder="Find your country..." name="country" />
+                    <input type="hidden" id="cityLat" name="cityLat" />
+                    <input type="hidden" id="cityLng" name="cityLng" />
+                    <input type="text" placeholder="Find your country..." name="country" id="pac-input" />
                     <input type="submit" value="Find">
                 </form>
 
@@ -153,10 +157,8 @@
 
     <script src="{{ asset('designs/js/jquery-1.11.1.min.js') }}"></script>
     <script src="{{ asset('designs/js/plugins.js') }}"></script>
-    <script src="{{ asset('designs/js/app.js') }}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-
+    <script src="{{ asset('assets/js/map.js') }}"></script>
     <script>
         @if (Session::has('message'))
             var type = "{{ Session::get('alert-type', 'info') }}"
